@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,18 +6,58 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Modal,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
-  return (
-      <SafeAreaView style={styles.container}>
-        <ScrollView showsVerticalScrollIndicator={false}
-         contentContainerStyle={{ paddingBottom: 180 }}
-        >
+  const navigation = useNavigation();
+  
+  // Estados
+  const [searchText, setSearchText] = useState('');
+  const [profileVisible, setProfileVisible] = useState(false);
+  const [progressPercent] = useState(75);
 
+  // Manejadores de eventos
+  const handleSearchPress = () => {
+    if (searchText.trim()) {
+      Alert.alert('Búsqueda', `Buscaste: ${searchText}`);
+      setSearchText('');
+    } else {
+      Alert.alert('Error', 'Escribe algo para buscar');
+    }
+  };
+
+  const handleProfilePress = () => {
+    setProfileVisible(true);
+  };
+
+  const handleStartExercise = () => {//Aca va a estar el ejercicio del dia
+
+  };
+
+  const handleLettersPress = () => {
+    navigation.navigate('Juegos'); // Navega a juegos, para las letras favoritas
+  };
+
+  const handleGamesPress = () => {
+    navigation.navigate('Juegos'); // Navega directamente a Juegos
+  };
+
+  const handleProgressPress = () => {
+    navigation.navigate('Progreso');
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 180 }}
+      >
         {/* HEADER */}
         <LinearGradient
           colors={['#5B8CFF', '#7B61FF']}
@@ -28,7 +68,10 @@ export default function HomeScreen() {
             <Text style={styles.username}>Bienvenido a Xpressa+</Text>
           </View>
 
-          <TouchableOpacity style={styles.profileButton}>
+          <TouchableOpacity
+            style={styles.profileButton}
+            onPress={handleProfilePress}
+          >
             <Ionicons name="person" size={26} color="white" />
           </TouchableOpacity>
         </LinearGradient>
@@ -40,6 +83,9 @@ export default function HomeScreen() {
             placeholder="Buscar ejercicios..."
             placeholderTextColor="#888"
             style={styles.searchInput}
+            value={searchText}
+            onChangeText={setSearchText}
+            onSubmitEditing={handleSearchPress}
           />
         </View>
 
@@ -47,7 +93,10 @@ export default function HomeScreen() {
         <Text style={styles.sectionTitle}>Accesos rápidos</Text>
 
         <View style={styles.cardContainer}>
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={handleLettersPress}
+          >
             <Ionicons name="albums" size={32} color="#5B8CFF" />
             <Text style={styles.cardTitle}>Tus letras</Text>
             <Text style={styles.cardText}>
@@ -55,7 +104,10 @@ export default function HomeScreen() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={handleGamesPress}
+          >
             <Ionicons name="game-controller" size={32} color="#7B61FF" />
             <Text style={styles.cardTitle}>Juegos</Text>
             <Text style={styles.cardText}>
@@ -67,20 +119,28 @@ export default function HomeScreen() {
         {/* PROGRESS */}
         <Text style={styles.sectionTitle}>Tu progreso</Text>
 
-        <View style={styles.progressCard}>
+        <TouchableOpacity
+          style={styles.progressCard}
+          onPress={handleProgressPress}
+        >
           <View style={styles.progressHeader}>
             <Text style={styles.progressTitle}>Nivel semanal</Text>
-            <Text style={styles.progressPercent}>75%</Text>
+            <Text style={styles.progressPercent}>{progressPercent}%</Text>
           </View>
 
           <View style={styles.progressBarBackground}>
-            <View style={styles.progressBarFill} />
+            <View
+              style={[
+                styles.progressBarFill,
+                { width: `${progressPercent}%` },
+              ]}
+            />
           </View>
 
           <Text style={styles.progressText}>
             ¡Excelente trabajo! Sigue practicando.
           </Text>
-        </View>
+        </TouchableOpacity>
 
         {/* DAILY EXERCISE */}
         <LinearGradient
@@ -92,17 +152,52 @@ export default function HomeScreen() {
           </Text>
 
           <Text style={styles.exerciseText}>
-            Practica tus actividades con la letra “R”.
+            Practica tus actividades con la letra R.
           </Text>
 
-          <TouchableOpacity style={styles.exerciseButton}>
+          <TouchableOpacity
+            style={styles.exerciseButton}
+            onPress={handleStartExercise}
+          >
             <Text style={styles.exerciseButtonText}>
               Comenzar
             </Text>
           </TouchableOpacity>
         </LinearGradient>
-
       </ScrollView>
+
+      {/* MODAL DE PERFIL */}
+      <Modal visible={profileVisible} animationType="slide">
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity onPress={() => setProfileVisible(false)}>
+              <Ionicons name="close" size={30} color="#5B8CFF" />
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Mi Perfil</Text>
+            <View style={{ width: 30 }} />
+          </View>
+
+          <View style={styles.modalContent}>
+            <View style={styles.profileSection}>
+              <View style={styles.profileAvatar}>
+                <Ionicons name="person" size={50} color="white" />
+              </View>
+              <Text style={styles.profileName}>Juan Pérez</Text>
+              <Text style={styles.profileEmail}>juan@ejemplo.com</Text>
+            </View>
+
+            <TouchableOpacity style={styles.editButton}>
+              <Ionicons name="pencil" size={20} color="white" />
+              <Text style={styles.editButtonText}>Editar Perfil</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.logoutButton}>
+              <Ionicons name="log-out" size={20} color="#5B8CFF" />
+              <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -241,7 +336,6 @@ const styles = StyleSheet.create({
   },
 
   progressBarFill: {
-    width: '75%',
     height: '100%',
     backgroundColor: '#5B8CFF',
     borderRadius: 10,
@@ -283,6 +377,95 @@ const styles = StyleSheet.create({
   },
 
   exerciseButtonText: {
+    color: '#5B8CFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+
+  // ESTILOS DEL MODAL
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#F5F7FF',
+  },
+
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+
+  modalContent: {
+    padding: 20,
+  },
+
+  profileSection: {
+    alignItems: 'center',
+    marginVertical: 40,
+  },
+
+  profileAvatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#5B8CFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+
+  profileName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#222',
+  },
+
+  profileEmail: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 5,
+  },
+
+  editButton: {
+    backgroundColor: '#5B8CFF',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 12,
+    marginTop: 30,
+    gap: 10,
+  },
+
+  editButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+
+  logoutButton: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 12,
+    marginTop: 15,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: '#5B8CFF',
+  },
+
+  logoutButtonText: {
     color: '#5B8CFF',
     fontWeight: 'bold',
     fontSize: 16,
