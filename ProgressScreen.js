@@ -1,26 +1,12 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ProgressScreen() {
   const [statsModalVisible, setStatsModalVisible] = useState(false);
-  const [level, setLevel] = useState(5);
-  const [progress, setProgress] = useState(75);
-
-  const handleLevelUp = () => {
-    setLevel(level + 1);
-    setProgress(0);
-    Alert.alert('¡Felicidades!', `¡Subiste al nivel ${level + 1}!`);
-  };
-
-  const handleProgressIncrease = () => {
-    if (progress < 100) {
-      setProgress(progress + 10);
-    } else {
-      Alert.alert('¡Nivel completado!', 'Haz clic en "Subir de nivel"');
-    }
-  };
+  const [level] = useState(5);
+  const [progress] = useState(75);
 
   const handleShowStats = () => {
     setStatsModalVisible(true);
@@ -63,26 +49,6 @@ export default function ProgressScreen() {
 
         <Text style={styles.percent}>{progress}%</Text>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={handleProgressIncrease}
-          >
-            <Ionicons name="add-circle" size={20} color="white" />
-            <Text style={styles.buttonText}>Practicar</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.actionButton, styles.levelUpButton]}
-            onPress={handleLevelUp}
-            disabled={progress < 100}
-          >
-            <Ionicons name="arrow-up" size={20} color="#5B8CFF" />
-            <Text style={[styles.buttonText, { color: '#5B8CFF' }]}>
-              Subir Nivel
-            </Text>
-          </TouchableOpacity>
-        </View>
       </TouchableOpacity>
 
       {/* MODAL DE ESTADÍSTICAS */}

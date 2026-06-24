@@ -56,7 +56,6 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 180 }}
       >
         {/* HEADER */}
         <LinearGradient
@@ -182,8 +181,8 @@ export default function HomeScreen() {
               <View style={styles.profileAvatar}>
                 <Ionicons name="person" size={50} color="white" />
               </View>
-              <Text style={styles.profileName}>Juan Pérez</Text>
-              <Text style={styles.profileEmail}>juan@ejemplo.com</Text>
+              <Text style={styles.profileName}>Ian Peralta</Text>
+              <Text style={styles.profileEmail}>ian@ejemplo.com</Text>
             </View>
 
             <TouchableOpacity style={styles.editButton}>
